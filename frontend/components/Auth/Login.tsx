@@ -53,7 +53,7 @@ export default function Login() {
           required
           value={credentials.email}
           onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
           placeholder="votre@email.com"
         />
       </div>
@@ -68,7 +68,7 @@ export default function Login() {
           required
           value={credentials.password}
           onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
           placeholder="••••••••"
         />
       </div>

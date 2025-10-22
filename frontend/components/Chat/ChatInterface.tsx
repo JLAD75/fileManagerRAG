@@ -161,7 +161,7 @@ export default function ChatInterface({ onClose }: ChatInterfaceProps) {
             onKeyPress={handleKeyPress}
             placeholder="Posez une question sur vos documents..."
             rows={3}
-            className="flex-1 resize-none border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="flex-1 resize-none border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
           />
           <button
             onClick={handleSend}

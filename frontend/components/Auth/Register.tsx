@@ -62,7 +62,7 @@ export default function Register({ onSuccess }: RegisterProps) {
           required
           value={credentials.name}
           onChange={(e) => setCredentials({ ...credentials, name: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
           placeholder="Jean Dupont"
         />
       </div>
@@ -77,7 +77,7 @@ export default function Register({ onSuccess }: RegisterProps) {
           required
           value={credentials.email}
           onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
           placeholder="votre@email.com"
         />
       </div>
@@ -92,7 +92,7 @@ export default function Register({ onSuccess }: RegisterProps) {
           required
           value={credentials.password}
           onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
           placeholder="••••••••"
         />
       </div>
@@ -107,7 +107,7 @@ export default function Register({ onSuccess }: RegisterProps) {
           required
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-gray-900 bg-white"
           placeholder="••••••••"
         />
       </div>

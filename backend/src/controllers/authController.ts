@@ -47,9 +47,9 @@ export const login = async (req: Request, res: Response) => {
     const expiresIn = process.env.JWT_EXPIRES_IN || '7d'
 
     const token = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id.toString(), email: user.email },
       secret,
-      { expiresIn }
+      { expiresIn: expiresIn as string }
     )
 
     res.json({

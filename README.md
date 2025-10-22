@@ -47,7 +47,7 @@ Un système complet de gestion de fichiers augmenté par l'intelligence artifici
 - **AI/ML**:
   - LangChain pour l'orchestration
   - OpenAI pour les embeddings et le chat
-  - FAISS pour le vector store
+  - HNSWLib pour le vector store (indexation rapide et efficace)
 
 ## Installation
 
@@ -63,12 +63,25 @@ cd fileManagerRAG
 ```
 
 ### 2. Installer les dépendances
+
+**IMPORTANT**: Installez les dépendances avec npm (pas besoin de flags spéciaux):
+
 ```bash
+# Installer les dépendances racine
 npm install
-cd frontend && npm install
-cd ../backend && npm install
+
+# Installer les dépendances frontend
+cd frontend
+npm install
+cd ..
+
+# Installer les dépendances backend
+cd backend
+npm install
 cd ..
 ```
+
+> Note: Si vous rencontrez des erreurs avec les peer dependencies, les versions ont été testées pour être compatibles sans nécessiter `--legacy-peer-deps`.
 
 ### 3. Configuration du Backend
 
@@ -212,7 +225,7 @@ Le système utilise la technique RAG pour permettre à l'IA de répondre aux que
 1. **Extraction**: Les documents sont traités et leur texte extrait
 2. **Chunking**: Le texte est divisé en morceaux gérables
 3. **Embedding**: Chaque morceau est converti en vecteur via OpenAI Embeddings
-4. **Indexation**: Les vecteurs sont stockés dans FAISS pour une recherche rapide
+4. **Indexation**: Les vecteurs sont stockés dans HNSWLib pour une recherche rapide et efficace
 5. **Retrieval**: Lors d'une question, les morceaux les plus pertinents sont récupérés
 6. **Generation**: GPT-4 génère une réponse basée sur le contexte récupéré
 

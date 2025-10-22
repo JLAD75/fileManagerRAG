@@ -1,13 +1,13 @@
-import { FaissStore } from '@langchain/community/vectorstores/faiss'
+import { HNSWLib } from '@langchain/community/vectorstores/hnswlib'
 import { OpenAIEmbeddings } from '@langchain/openai'
-import { Document } from 'langchain/document'
+import { Document } from '@langchain/core/documents'
 import { DocumentChunk, VectorDocument } from '../types'
 import path from 'path'
 import fs from 'fs'
 
 export class VectorStoreService {
   private static instance: VectorStoreService
-  private stores: Map<string, FaissStore> = new Map()
+  private stores: Map<string, HNSWLib> = new Map()
   private embeddings: OpenAIEmbeddings
   private storeDir: string
 
@@ -29,7 +29,7 @@ export class VectorStoreService {
     return VectorStoreService.instance
   }
 
-  private async getOrCreateStore(userId: string): Promise<FaissStore> {
+  private async getOrCreateStore(userId: string): Promise<HNSWLib> {
     if (this.stores.has(userId)) {
       return this.stores.get(userId)!
     }
@@ -38,7 +38,7 @@ export class VectorStoreService {
 
     try {
       if (fs.existsSync(storePath)) {
-        const store = await FaissStore.load(storePath, this.embeddings)
+        const store = await HNSWLib.load(storePath, this.embeddings)
         this.stores.set(userId, store)
         return store
       }
@@ -46,7 +46,7 @@ export class VectorStoreService {
       console.log(`Creating new vector store for user ${userId}`)
     }
 
-    const store = await FaissStore.fromDocuments(
+    const store = await HNSWLib.fromDocuments(
       [new Document({ pageContent: 'Initialization document', metadata: {} })],
       this.embeddings
     )
@@ -105,13 +105,12 @@ export class VectorStoreService {
 
   async deleteDocumentsByFileId(fileId: string, userId: string): Promise<void> {
     try {
-      const store = await this.getOrCreateStore(userId)
-
-      // Note: FAISS doesn't support direct deletion, so we'd need to rebuild the index
-      // For now, we'll just log this. A full implementation would recreate the store
-      // without the deleted file's documents
-      console.log(`Deletion requested for file ${fileId} (not fully implemented)`)
-
+      // HNSWLib doesn't support direct deletion, so we need to rebuild the store
+      // For now, we'll just log this. A full implementation would:
+      // 1. Load all documents
+      // 2. Filter out the ones with matching fileId
+      // 3. Create a new store with the remaining documents
+      console.log(`Deletion requested for file ${fileId} - requires store rebuild`)
     } catch (error) {
       console.error('Delete documents error:', error)
     }

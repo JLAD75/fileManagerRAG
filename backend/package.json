@@ -1,0 +1,44 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend API for File Manager RAG",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsc",
+    "start": "node --max-old-space-size=2048 dist/index.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "express-fileupload": "^1.5.1",
+    "mongoose": "^8.9.3",
+    "pdf-parse": "^1.1.1",
+    "exceljs": "^4.4.0",
+    "csv-parse": "^5.6.0",
+    "mammoth": "^1.8.0",
+    "@langchain/core": "0.3.22",
+    "@langchain/community": "0.3.17",
+    "@langchain/openai": "0.3.14",
+    "langchain": "0.3.8",
+    "hnswlib-node": "^3.0.0",
+    "uuid": "^11.0.5"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17",
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/express-fileupload": "^1.5.1",
+    "@types/node": "^22.10.5",
+    "@types/uuid": "^10.0.0",
+    "@types/pdf-parse": "^1.1.4",
+    "typescript": "^5.7.3",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2"
+  }
+}

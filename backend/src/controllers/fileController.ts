@@ -1,33 +1,67 @@
 import { Response } from 'express'
+import { UploadedFile } from 'express-fileupload'
 import { File } from '../models/File'
 import { AuthRequest } from '../types'
 import { DocumentProcessor } from '../services/documentProcessor'
 import { VectorStoreService } from '../services/vectorStore'
 import fs from 'fs/promises'
+import path from 'path'
+import { v4 as uuidv4 } from 'uuid'
 
 const documentProcessor = new DocumentProcessor()
 const vectorStore = VectorStoreService.getInstance()
 
 export const uploadFile = async (req: AuthRequest, res: Response) => {
   try {
-    if (!req.file) {
+    if (!req.files || !req.files.file) {
       return res.status(400).json({ message: 'No file uploaded' })
     }
 
+    const uploadedFile = req.files.file as UploadedFile
+
+    // Validate file type
+    const allowedTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel',
+      'text/csv',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain',
+    ]
+
+    if (!allowedTypes.includes(uploadedFile.mimetype)) {
+      return res.status(400).json({ message: 'Invalid file type' })
+    }
+
+    // Create uploads directory if it doesn't exist
+    const uploadDir = path.join(process.cwd(), 'uploads')
+    try {
+      await fs.access(uploadDir)
+    } catch {
+      await fs.mkdir(uploadDir, { recursive: true })
+    }
+
+    // Generate unique filename
+    const uniqueName = `${uuidv4()}${path.extname(uploadedFile.name)}`
+    const filePath = path.join(uploadDir, uniqueName)
+
+    // Move file to uploads directory
+    await uploadedFile.mv(filePath)
+
     const file = new File({
       userId: req.user!.userId,
-      name: req.file.filename,
-      originalName: req.file.originalname,
-      size: req.file.size,
-      mimeType: req.file.mimetype,
-      path: req.file.path,
+      name: uniqueName,
+      originalName: uploadedFile.name,
+      size: uploadedFile.size,
+      mimeType: uploadedFile.mimetype,
+      path: filePath,
       isProcessed: false,
     })
 
     await file.save()
 
     // Process file asynchronously
-    processFileAsync(file._id.toString(), req.file.path, req.user!.userId)
+    processFileAsync(file._id.toString(), filePath, req.user!.userId)
 
     res.status(201).json(file)
   } catch (error) {

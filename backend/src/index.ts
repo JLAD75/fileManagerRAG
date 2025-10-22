@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import fileUpload from 'express-fileupload'
 import { connectDatabase } from './config/database'
 import authRoutes from './routes/authRoutes'
 import fileRoutes from './routes/fileRoutes'
@@ -19,6 +20,16 @@ app.use(cors({
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+// File upload middleware
+app.use(fileUpload({
+  limits: {
+    fileSize: parseInt(process.env.MAX_FILE_SIZE || '10485760') // 10MB default
+  },
+  abortOnLimit: true,
+  createParentPath: true,
+  useTempFiles: false,
+}))
 
 // Routes
 app.use('/api/auth', authRoutes)

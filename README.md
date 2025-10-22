@@ -39,9 +39,10 @@ Un système complet de gestion de fichiers augmenté par l'intelligence artifici
 - **Language**: TypeScript
 - **Database**: MongoDB avec Mongoose
 - **Authentication**: JWT (JSON Web Tokens)
+- **File Upload**: express-fileupload (sécurisé)
 - **File Processing**:
   - PDF: pdf-parse
-  - Excel: xlsx
+  - Excel: ExcelJS (sécurisé, remplace xlsx)
   - CSV: csv-parse
   - Word: mammoth
 - **AI/ML**:
@@ -231,11 +232,15 @@ Le système utilise la technique RAG pour permettre à l'IA de répondre aux que
 
 ### Sécurité
 - Authentification JWT avec expiration
-- Hachage des mots de passe avec bcrypt
-- Validation des types de fichiers
-- Limite de taille des fichiers
-- Isolation des données par utilisateur
-- CORS configuré
+- Hachage des mots de passe avec bcrypt (salt rounds: 10)
+- Validation stricte des types de fichiers
+- Limite de taille des fichiers (10MB par défaut)
+- Isolation complète des données par utilisateur
+- CORS configuré avec origines autorisées
+- **Packages sécurisés**:
+  - `express-fileupload` (pas de vulnérabilités connues)
+  - `exceljs` (sans vulnérabilités, remplace xlsx vulnérable)
+  - Toutes les dépendances régulièrement mises à jour
 
 ## Scripts Disponibles
 

@@ -1,5 +1,5 @@
 import pdfParse from 'pdf-parse'
-import xlsx from 'xlsx'
+import ExcelJS from 'exceljs'
 import { parse } from 'csv-parse/sync'
 import mammoth from 'mammoth'
 import fs from 'fs/promises'
@@ -10,15 +10,15 @@ export class DocumentProcessor {
     const buffer = await fs.readFile(filePath)
 
     if (filePath.endsWith('.pdf')) {
-      return this.processPDF(buffer)
+      return await this.processPDF(buffer)
     } else if (filePath.endsWith('.xlsx') || filePath.endsWith('.xls')) {
-      return this.processExcel(buffer)
+      return await this.processExcel(buffer)
     } else if (filePath.endsWith('.csv')) {
-      return this.processCSV(buffer)
+      return await this.processCSV(buffer)
     } else if (filePath.endsWith('.docx')) {
-      return this.processDOCX(buffer)
+      return await this.processDOCX(buffer)
     } else if (filePath.endsWith('.txt')) {
-      return this.processTXT(buffer)
+      return await this.processTXT(buffer)
     }
 
     throw new Error('Unsupported file format')
@@ -29,34 +29,44 @@ export class DocumentProcessor {
     return data.text
   }
 
-  private processExcel(buffer: Buffer): Promise<string> {
-    return new Promise((resolve) => {
-      const workbook = xlsx.read(buffer, { type: 'buffer' })
-      let text = ''
+  private async processExcel(buffer: Buffer): Promise<string> {
+    const workbook = new ExcelJS.Workbook()
+    await workbook.xlsx.load(buffer)
 
-      workbook.SheetNames.forEach((sheetName) => {
-        const sheet = workbook.Sheets[sheetName]
-        const csv = xlsx.utils.sheet_to_csv(sheet)
-        text += `Sheet: ${sheetName}\n${csv}\n\n`
+    let text = ''
+
+    workbook.eachSheet((worksheet, sheetId) => {
+      text += `Sheet: ${worksheet.name}\n`
+
+      worksheet.eachRow((row, rowNumber) => {
+        const rowValues = row.values as any[]
+        // Skip the first element as it's undefined (exceljs quirk)
+        const cleanedRow = rowValues.slice(1).map(cell => {
+          if (cell === null || cell === undefined) return ''
+          if (typeof cell === 'object' && 'text' in cell) return cell.text
+          if (typeof cell === 'object' && 'result' in cell) return cell.result
+          return String(cell)
+        })
+        text += cleanedRow.join(', ') + '\n'
       })
 
-      resolve(text)
+      text += '\n'
     })
+
+    return text
   }
 
-  private processCSV(buffer: Buffer): Promise<string> {
-    return new Promise((resolve) => {
-      const content = buffer.toString('utf-8')
-      const records = parse(content, {
-        skip_empty_lines: true,
-      })
-
-      const text = records
-        .map((row: any[]) => row.join(', '))
-        .join('\n')
-
-      resolve(text)
+  private async processCSV(buffer: Buffer): Promise<string> {
+    const content = buffer.toString('utf-8')
+    const records = parse(content, {
+      skip_empty_lines: true,
     })
+
+    const text = records
+      .map((row: any[]) => row.join(', '))
+      .join('\n')
+
+    return text
   }
 
   private async processDOCX(buffer: Buffer): Promise<string> {
@@ -64,8 +74,8 @@ export class DocumentProcessor {
     return result.value
   }
 
-  private processTXT(buffer: Buffer): Promise<string> {
-    return Promise.resolve(buffer.toString('utf-8'))
+  private async processTXT(buffer: Buffer): Promise<string> {
+    return buffer.toString('utf-8')
   }
 
   chunkText(text: string, fileId: string, chunkSize = 1000, overlap = 200): DocumentChunk[] {

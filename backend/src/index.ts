@@ -9,6 +9,10 @@ import chatRoutes from './routes/chatRoutes'
 
 dotenv.config()
 
+console.log('Environment Variables:')
+console.log('PORT:', process.env.PORT || 'UNKNOWN')
+console.log("CORS_ORIGIN:", process.env.CORS_ORIGIN || "UNKNOWN");
+
 const app = express()
 const PORT = process.env.PORT || 3001
 

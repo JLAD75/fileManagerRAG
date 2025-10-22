@@ -1,9 +1,10 @@
 import { Router } from 'express'
-import { authenticateToken } from '../middleware/auth'
-import { chat } from '../controllers/chatController'
+import { chat, getModels } from "../controllers/chatController";
+import { authenticateToken } from "../middleware/auth";
 
-const router = Router()
+const router = Router();
 
-router.post('/', authenticateToken, chat)
+router.post("/", authenticateToken, chat);
+router.get("/models", authenticateToken, getModels);
 
 export default router

@@ -30,20 +30,24 @@ export default function WorkspacePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar onToggleChat={() => setShowChat(!showChat)} />
 
       <div className="flex">
-        <div className={`${showChat ? 'w-1/2' : 'w-full'} transition-all duration-300`}>
+        <div
+          className={`${
+            showChat ? "w-1/2" : "w-full"
+          } bg-gray-50 dark:bg-gray-900 transition-all duration-300`}
+        >
           <FileManager />
         </div>
 
         {showChat && (
-          <div className="w-1/2 border-l border-gray-200">
+          <div className="w-1/2 bg-gray-50 dark:bg-gray-900 border-l border-gray-200">
             <ChatInterface onClose={() => setShowChat(false)} />
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

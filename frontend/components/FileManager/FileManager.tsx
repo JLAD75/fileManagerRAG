@@ -4,12 +4,23 @@ import api from "@/lib/api";
 import { FileItem } from "@/types";
 import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import DocumentViewer from "../Chat/DocumentViewer";
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import FileList from "./FileList";
 
 export default function FileManager() {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<{
+    fileId: string;
+    fileName: string;
+  } | null>(null);
+  const [fileToDelete, setFileToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchFiles = async () => {
     setLoading(true);
@@ -86,13 +97,32 @@ export default function FileManager() {
     fetchFiles();
   };
 
-  const handleDelete = async (fileId: string) => {
+  const handleDeleteClick = (fileId: string, fileName: string) => {
+    setFileToDelete({ id: fileId, name: fileName });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!fileToDelete) return;
+
+    setIsDeleting(true);
     try {
-      await api.delete(`/files/${fileId}`);
+      await api.delete(`/files/${fileToDelete.id}`);
+      setFileToDelete(null);
       fetchFiles();
     } catch (error) {
       console.error("Error deleting file:", error);
+      // Optionnel: Afficher un message d'erreur à l'utilisateur
+    } finally {
+      setIsDeleting(false);
     }
+  };
+
+  const handleCancelDelete = () => {
+    setFileToDelete(null);
+  };
+
+  const handleView = (fileId: string, fileName: string) => {
+    setSelectedDocument({ fileId, fileName });
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -161,7 +191,29 @@ export default function FileManager() {
         </div>
       </div>
 
-      <FileList files={files} onDelete={handleDelete} loading={loading} />
+      <FileList
+        files={files}
+        onDelete={handleDeleteClick}
+        onView={handleView}
+        loading={loading}
+      />
+
+      {selectedDocument && (
+        <DocumentViewer
+          fileId={selectedDocument.fileId}
+          fileName={selectedDocument.fileName}
+          onClose={() => setSelectedDocument(null)}
+        />
+      )}
+
+      {fileToDelete && (
+        <ConfirmDeleteModal
+          fileName={fileToDelete.name}
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          isDeleting={isDeleting}
+        />
+      )}
     </div>
   );
 }

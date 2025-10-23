@@ -2,6 +2,7 @@
 
 import { useTheme } from "@/context/ThemeContext";
 import { getUserData, removeAuthData } from "@/lib/auth";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface NavbarProps {
@@ -22,7 +23,15 @@ export default function Navbar({ onToggleChat }: NavbarProps) {
     <nav className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
+            <Image
+              src="/android-chrome-192x192.png"
+              alt="Logo"
+              width={192}
+              height={192}
+              className="h-12 w-12"
+              unoptimized
+            />
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               File Manager RAG
             </h1>
